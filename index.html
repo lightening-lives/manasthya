@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manasthya Foundation</title>
+  <meta name="description" content="Manasthya Foundation is a Section 8 Company promoting healthcare, rural development, nutrition, education, and social welfare for underserved communities." />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="images/logo.png" />
+  <link rel="shortcut icon" type="image/png" href="images/logo.png" />
+  <link rel="apple-touch-icon" href="images/logo.png" />
+  <meta name="theme-color" content="#0d2818" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: { DEFAULT: '#1b4332', light: '#2d6a4f', dark: '#0d2818' },
+            gold:   { DEFAULT: '#c9a227', light: '#e8c04a' },
+            cream:  { DEFAULT: '#faf7f2', dark: '#f0ebe0', warm: '#e8e0d0' },
+            earth:  { DEFAULT: '#6b4f3a' },
+            sage:   { DEFAULT: '#84a98c' },
+          },
+          fontFamily: {
+            display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            body:    ['"DM Sans"', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: 'DM Sans', system-ui, sans-serif; background: #faf7f2; color: #1a1a1a; }
+
+    /* Grain overlay */
+    body::after {
+      content: ''; position: fixed; inset: 0; z-index: 999; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.25;
+    }
+
+    /* Scroll reveal */
+    .reveal    { opacity:0; transform:translateY(28px); transition:opacity .7s ease, transform .7s ease; }
+    .reveal-l  { opacity:0; transform:translateX(-32px); transition:opacity .7s ease, transform .7s ease; }
+    .reveal-r  { opacity:0; transform:translateX(32px);  transition:opacity .7s ease, transform .7s ease; }
+    .reveal.in,.reveal-l.in,.reveal-r.in { opacity:1; transform:none; }
+    .stagger > *:nth-child(1){transition-delay:.00s}
+    .stagger > *:nth-child(2){transition-delay:.10s}
+    .stagger > *:nth-child(3){transition-delay:.20s}
+    .stagger > *:nth-child(4){transition-delay:.30s}
+    .stagger > *:nth-child(5){transition-delay:.40s}
+
+    /* ── Navbar ── */
+    #nav { transition: background .35s, box-shadow .35s; }
+    #nav.solid { background: rgba(13,40,24,.97) !important; backdrop-filter: blur(14px); box-shadow: 0 2px 20px rgba(0,0,0,.2); }
+    /* Logo: prominent at top, shrinks on scroll */
+    #nav-logo { transition: height .35s ease; height: 104px; }
+    #nav.solid #nav-logo { height: 52px; }
+    @media (max-width: 768px) {
+      #nav-logo { height: 76px; }
+      #nav.solid #nav-logo { height: 44px; }
+    }
+
+    /* Hero gradient — strong left panel for text readability */
+    .hero-wrap {
+      background:
+        linear-gradient(to right, rgba(8,26,16,.92) 0%, rgba(8,26,16,.72) 52%, rgba(8,26,16,.30) 100%),
+        linear-gradient(to bottom, rgba(8,26,16,.55) 0%, rgba(8,26,16,.18) 45%, rgba(8,26,16,.72) 100%),
+        url('images/hero-bg.jpg') center 30% / cover no-repeat;
+      background-attachment: fixed;
+    }
+    .hero-ts { text-shadow: 0 2px 16px rgba(0,0,0,.7), 0 1px 4px rgba(0,0,0,.5); }
+
+    /* ── Gold button ── */
+    .btn-gold {
+      background: linear-gradient(110deg,#c9a227,#e8c04a 45%,#c9a227 60%,#a07d10);
+      background-size: 200% auto;
+      transition: background-position .5s, transform .2s, box-shadow .2s;
+    }
+    .btn-gold:hover { background-position: right center; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,162,39,.36); }
+
+    /* ── Program card ── */
+    .prog-card { transition: transform .3s, box-shadow .3s; }
+    .prog-card:hover { transform: translateY(-5px); box-shadow: 0 20px 44px rgba(27,67,50,.13); }
+
+    /* ── Founder card ── */
+    .founder-img { transition: transform .5s ease; }
+    .founder-card:hover .founder-img { transform: scale(1.04); }
+
+    /* ── Mobile menu ── */
+    #mob-menu { max-height:0; opacity:0; overflow:hidden; transition:max-height .4s ease, opacity .3s ease; }
+    #mob-menu.open { max-height:460px; opacity:1; }
+
+    /* ── Floating anim ── */
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .float-el { animation: float 5s ease-in-out infinite; }
+
+    /* ── Form inputs ── */
+    .fi { font-family:'DM Sans',sans-serif; font-size:.875rem; background:#faf7f2; border:1px solid #e8e0d0; border-radius:.75rem; padding:.875rem 1rem; width:100%; color:#1b4332; transition:border-color .2s, box-shadow .2s; }
+    .fi::placeholder { color:rgba(107,79,58,.4); }
+    .fi:focus { outline:none; border-color:#2d6a4f; box-shadow:0 0 0 3px rgba(45,106,79,.14); }
+
+    /* ── Blockquote ── */
+    .bq { border-left:3px solid #c9a227; background:linear-gradient(135deg,rgba(27,67,50,.05),rgba(201,162,39,.04)); border-radius:0 .75rem .75rem 0; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:#faf7f2; }
+    ::-webkit-scrollbar-thumb { background:#2d6a4f; border-radius:3px; }
+    ::selection { background:rgba(201,162,39,.28); color:#1b4332; }
+
+    /* ═══ NEWSPAPER CAROUSEL ═══ */
+    .news-carousel { position:relative; overflow:hidden; border-radius:1.5rem; }
+    .news-slide { position:absolute; inset:0; opacity:0; transition:opacity .8s ease; }
+    .news-slide.active { opacity:1; position:relative; }
+    /* For the grid-fade approach we use JS to toggle .active */
+    
+    /* ═══ CAMPS IMAGE GRID ═══ */
+    .camps-grid-img { transition: transform .4s ease, box-shadow .4s ease; }
+    .camps-grid-img:hover { transform: scale(1.03); box-shadow: 0 16px 40px rgba(27,67,50,.18); }
+
+    /* ── Wave ── */
+    .wave svg { display:block; }
+  </style>
+</head>
+
+<body class="antialiased">
+
+<!-- ══════════════════════════════════
+     NAVBAR
+══════════════════════════════════ -->
+<nav id="nav" class="fixed top-0 inset-x-0 z-50 py-3 bg-transparent">
+  <div class="max-w-7xl mx-auto px-5 lg:px-10 flex items-center justify-between">
+
+    <!-- Logo only — text removed per request -->
+    <a href="#home" class="group">
+      <img id="nav-logo" src="images/logo.png" alt="Manasthya Foundation"
+           class="w-auto drop-shadow-lg group-hover:scale-105 transition-transform" />
+    </a>
+
+    <!-- Desktop nav -->
+    <ul class="hidden md:flex items-center gap-6 text-sm font-body font-medium">
+      <li><a href="#about"    class="text-white/85 hover:text-gold transition-colors">About</a></li>
+      <li><a href="#programs" class="text-white/85 hover:text-gold transition-colors">Key Areas</a></li>
+      <li><a href="#founders" class="text-white/85 hover:text-gold transition-colors">Founders</a></li>
+      <li><a href="#media"    class="text-white/85 hover:text-gold transition-colors">Media</a></li>
+      <li><a href="#contact"  class="text-white/85 hover:text-gold transition-colors">Contact</a></li>
+      <li><a href="#contact"  class="btn-gold text-forest font-semibold px-5 py-2 rounded-full">Get Involved</a></li>
+    </ul>
+
+    <!-- Hamburger -->
+    <button id="ham" class="md:hidden text-white p-1.5" aria-label="Menu">
+      <svg id="ico-open"  width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6"  x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <svg id="ico-close" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="hidden"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+    </button>
+  </div>
+
+  <div id="mob-menu" class="md:hidden bg-forest/97 backdrop-blur-xl">
+    <ul class="px-5 py-4 flex flex-col gap-4 text-sm font-body font-medium">
+      <li><a href="#about"    class="block text-white/85 hover:text-gold py-1" onclick="closeMob()">About</a></li>
+      <li><a href="#programs" class="block text-white/85 hover:text-gold py-1" onclick="closeMob()">Key Areas</a></li>
+      <li><a href="#founders" class="block text-white/85 hover:text-gold py-1" onclick="closeMob()">Founders</a></li>
+      <li><a href="#media"    class="block text-white/85 hover:text-gold py-1" onclick="closeMob()">Media</a></li>
+      <li><a href="#contact"  class="block text-white/85 hover:text-gold py-1" onclick="closeMob()">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════════
+     HERO
+══════════════════════════════════ -->
+<section id="home" class="hero-wrap relative min-h-screen flex flex-col justify-center overflow-hidden">
+
+  <!-- Floating leaf decoration -->
+  <div class="absolute top-28 right-16 opacity-15 float-el hidden lg:block" style="animation-delay:1s">
+    <svg width="100" height="140" viewBox="0 0 100 140" fill="none">
+      <path d="M50 2C18 25 2 70 8 122C24 96 68 86 94 52C78 33 50 2 50 2Z" fill="#c9a227"/>
+      <line x1="50" y1="7" x2="26" y2="116" stroke="rgba(201,162,39,.45)" stroke-width="1.3"/>
+    </svg>
+  </div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-5 lg:px-10 pt-36 pb-24">
+    <div class="max-w-3xl">
+
+      <!-- Hero pill — "Collaborate. Empower. Transform." -->
+      <div class="mb-7 reveal">
+        <div class="inline-flex items-center gap-3 bg-gold/20 border border-gold/45 backdrop-blur-md rounded-full px-4 py-2">
+          <span class="w-2 h-2 rounded-full bg-gold flex-shrink-0 animate-pulse"></span>
+          <span class="font-body text-gold text-xs tracking-[.22em] uppercase font-bold">Collaborate. Empower. Transform.</span>
+        </div>
+      </div>
+
+      <!-- Title: "Manasthya Foundation" -->
+      <h1 class="font-display text-white hero-ts leading-[1.05] reveal" style="font-size:clamp(3.2rem,8vw,6.5rem);transition-delay:.1s">
+        Manasthya<br/>
+        <em class="text-gold not-italic">Foundation</em>
+      </h1>
+
+      <!-- Tagline -->
+      <p class="font-body text-white mt-6 text-lg leading-relaxed max-w-xl reveal hero-ts" style="transition-delay:.22s">
+        Enhancing the well-being of the underserved — through healthcare, rural development,
+        nutrition, education, and community empowerment.
+      </p>
+
+      <!-- CTAs -->
+      <div class="flex flex-wrap gap-4 mt-9 reveal" style="transition-delay:.34s">
+        <a href="#about"   class="btn-gold font-body font-semibold text-forest px-8 py-3.5 rounded-full">Discover Our Work</a>
+        <a href="#contact" class="font-body font-medium text-white border border-white/30 hover:border-gold hover:text-gold px-8 py-3.5 rounded-full transition-all">Partner With Us</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scroll cue -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/40">
+    <span class="font-body text-[10px] tracking-[.2em] uppercase">Scroll</span>
+    <div class="w-px h-8 bg-gradient-to-b from-white/40 to-transparent"></div>
+  </div>
+
+  <div class="wave absolute bottom-0 inset-x-0">
+    <svg viewBox="0 0 1440 56" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,36 C360,72 1080,0 1440,36 L1440,56 L0,56 Z" fill="#faf7f2"/>
+    </svg>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     ABOUT
+══════════════════════════════════ -->
+<section id="about" class="py-28 lg:py-36 bg-cream">
+  <div class="max-w-7xl mx-auto px-5 lg:px-10">
+    <div class="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
+
+      <div class="relative reveal-l">
+        <div class="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl">
+          <img src="images/about-bg.png" alt="Manasthya Foundation — About"
+               class="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+        </div>
+        <div class="float-el absolute -bottom-8 -right-4 lg:-right-8 bg-forest text-white rounded-2xl px-6 py-5 shadow-2xl max-w-[185px]" style="animation-delay:.8s">
+          <div class="font-display text-gold text-3xl font-light leading-none">Sec. 8</div>
+          <div class="font-body text-white/75 text-xs mt-1 leading-snug">Company · Companies<br/>Act, 2013</div>
+        </div>
+        <div class="absolute -top-6 -left-6 w-48 h-48 rounded-full bg-sage/15 -z-10 blur-3xl"></div>
+      </div>
+
+      <div class="reveal-r">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="block w-10 h-[3px] bg-gold rounded"></span>
+          <span class="font-body text-gold text-xs tracking-[.22em] uppercase font-medium">About Us</span>
+        </div>
+        <h2 class="font-display text-forest text-4xl lg:text-5xl leading-[1.1] mb-6">
+          What is <em>Manasthya?</em>
+        </h2>
+        <div class="bq pl-5 py-4 pr-4 mb-6 rounded-r-xl">
+          <p class="font-display text-forest text-xl italic leading-relaxed">
+            "Manasthya" — <em>"Manas"</em> (mind) + <em>"Stha"</em> (to reside) — 
+            encapsulates the ethos of this foundation.
+          </p>
+        </div>
+        <p class="font-body text-earth/85 leading-relaxed mb-4">
+          Manasthya Foundation is a <strong class="text-forest font-semibold">Section 8 Company</strong> incorporated under the
+          Companies Act, 2013, with a primary objective of promoting charitable activities.
+        </p>
+        <p class="font-body text-earth/85 leading-relaxed mb-8">
+          We strive to enhance the well-being of the underserved and society at large by ensuring
+          access to essential healthcare, fostering rural development and livelihood opportunities,
+          and promoting better nutrition through awareness, education, and capacity building.
+        </p>
+
+        <p class="font-body text-xs tracking-[.2em] uppercase text-earth/55 font-medium mb-4">Key Areas of Work</p>
+        <ul class="space-y-2.5">
+          <li class="flex items-start gap-2.5 font-body text-forest text-sm">
+            <span class="w-5 h-5 rounded-full bg-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 2.5" stroke="#c9a227" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Healthcare, Research, Diagnosis, Prevention and Treatment
+          </li>
+          <li class="flex items-start gap-2.5 font-body text-forest text-sm">
+            <span class="w-5 h-5 rounded-full bg-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 2.5" stroke="#c9a227" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Environment, Rural Development and Livelihood Generation
+          </li>
+          <li class="flex items-start gap-2.5 font-body text-forest text-sm">
+            <span class="w-5 h-5 rounded-full bg-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 2.5" stroke="#c9a227" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Nutrition and Consumption of Safe and Healthy Food
+          </li>
+          <li class="flex items-start gap-2.5 font-body text-forest text-sm">
+            <span class="w-5 h-5 rounded-full bg-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 2.5" stroke="#c9a227" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Social Welfare and Community Development
+          </li>
+          <li class="flex items-start gap-2.5 font-body text-forest text-sm">
+            <span class="w-5 h-5 rounded-full bg-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 2.5" stroke="#c9a227" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Education and Skill Development
+          </li>
+        </ul>
+        <a href="#programs" class="inline-flex items-center gap-2 font-body font-medium text-forest border-b-2 border-gold pb-0.5 mt-8 hover:text-gold transition-colors group">
+          Explore All Programs
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="group-hover:translate-x-1 transition-transform"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     PROGRAMS
+══════════════════════════════════ -->
+<section id="programs" class="py-28 lg:py-36 bg-white relative overflow-hidden">
+  <div class="absolute inset-0 opacity-[0.025]" style="background:radial-gradient(circle,#1b4332 1px,transparent 1px);background-size:38px 38px;"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-5 lg:px-10">
+    <div class="max-w-2xl mb-16 reveal">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="block w-10 h-[3px] bg-gold rounded"></span>
+        <span class="font-body text-gold text-xs tracking-[.22em] uppercase font-medium">Key Areas of Work</span>
+      </div>
+      <h2 class="font-display text-forest text-4xl lg:text-5xl leading-[1.1] mb-4">
+        Dedicated to Improving<br/><em>Lives That Matter Most</em>
+      </h2>
+      <p class="font-body text-earth/75 text-lg leading-relaxed">
+        Five interconnected program areas creating lasting social impact for those who need it most.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-7 stagger">
+
+      <div class="prog-card rounded-3xl overflow-hidden shadow-md border border-cream-warm reveal group">
+        <div class="h-52 overflow-hidden">
+          <img src="images/program-healthcare.png" alt="Healthcare camp screening and diagnosis" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+        </div>
+        <div class="p-7 bg-cream">
+          <span class="inline-flex items-center gap-1.5 bg-red-50 text-red-700 text-xs font-body font-semibold px-3 py-1 rounded-full mb-4">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            Healthcare
+          </span>
+          <h3 class="font-display text-forest text-2xl font-semibold mb-3 leading-snug">Healthcare, Research, Diagnosis, Prevention &amp; Treatment</h3>
+          <p class="font-body text-earth/80 text-sm leading-relaxed">
+            Organizing health camps, laboratories, and research centres; supporting government healthcare facilities; promoting preventive care. Special focus on Sickle Cell Anaemia, Thalassemia, Diabetes, cardiovascular diseases, and mental health.
+          </p>
+        </div>
+      </div>
+
+      <div class="prog-card rounded-3xl overflow-hidden shadow-md border border-cream-warm reveal group">
+        <div class="h-52 overflow-hidden">
+          <img src="images/program-environment.png" alt="Rural farming and environment outreach" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+        </div>
+        <div class="p-7 bg-cream">
+          <span class="inline-flex items-center gap-1.5 bg-green-50 text-green-800 text-xs font-body font-semibold px-3 py-1 rounded-full mb-4">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Environment
+          </span>
+          <h3 class="font-display text-forest text-2xl font-semibold mb-3 leading-snug">Environment, Rural Development &amp; Livelihood Generation</h3>
+          <p class="font-body text-earth/80 text-sm leading-relaxed">
+            Supporting smallholder farmers through financial and technical assistance; promoting regenerative, agroecological farming; facilitating access to seeds, bio-inputs, soil testing, and market linkages for farmer producer organizations.
+          </p>
+        </div>
+      </div>
+
+      <div class="prog-card rounded-3xl overflow-hidden shadow-md border border-cream-warm reveal group">
+        <div class="h-52 overflow-hidden">
+          <img src="images/program-nutrition.png" alt="Nutrition awareness and healthy food initiative" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+        </div>
+        <div class="p-7 bg-cream">
+          <span class="inline-flex items-center gap-1.5 bg-amber-50 text-amber-800 text-xs font-body font-semibold px-3 py-1 rounded-full mb-4">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            Nutrition
+          </span>
+          <h3 class="font-display text-forest text-2xl font-semibold mb-3 leading-snug">Nutrition &amp; Consumption of Safe and Healthy Food</h3>
+          <p class="font-body text-earth/80 text-sm leading-relaxed">
+            Promoting safe, nutritious food through sustainable farming practices; supporting dietary diversity, kitchen gardens, and nutrition awareness; working with medical professionals to address malnutrition.
+          </p>
+        </div>
+      </div>
+
+      <div class="prog-card rounded-3xl overflow-hidden shadow-md border border-cream-warm reveal group">
+        <div class="h-52 overflow-hidden">
+          <img src="images/program-education.png" alt="Education and skill development training" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+        </div>
+        <div class="p-7 bg-cream">
+          <span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-800 text-xs font-body font-semibold px-3 py-1 rounded-full mb-4">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            Education
+          </span>
+          <h3 class="font-display text-forest text-2xl font-semibold mb-3 leading-snug">Education &amp; Skill Development</h3>
+          <p class="font-body text-earth/80 text-sm leading-relaxed">
+            Vocational training, literacy and career guidance, scholarships for students from underprivileged backgrounds — with focus on healthcare, sustainable agriculture, and environmental sustainability.
+          </p>
+        </div>
+      </div>
+
+      <div class="prog-card rounded-3xl overflow-hidden shadow-md border border-cream-warm md:col-span-2 lg:col-span-1 reveal group">
+        <div class="h-52 overflow-hidden">
+          <img src="images/program-welfare.png" alt="Social welfare and community development drive" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+        </div>
+        <div class="p-7 bg-cream">
+          <span class="inline-flex items-center gap-1.5 bg-purple-50 text-purple-800 text-xs font-body font-semibold px-3 py-1 rounded-full mb-4">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Social Welfare
+          </span>
+          <h3 class="font-display text-forest text-2xl font-semibold mb-3 leading-snug">Social Welfare &amp; Community Development</h3>
+          <p class="font-body text-earth/80 text-sm leading-relaxed">
+            Financial assistance and essential support — food, clothing, shelter, healthcare — for economically weaker sections, orphans, senior citizens, persons with disabilities, and other disadvantaged groups.
+          </p>
+        </div>
+      </div>
+
+      <!-- CTA card -->
+      <div class="rounded-3xl bg-forest p-8 flex flex-col justify-between reveal">
+        <div>
+          <div class="font-display text-gold text-5xl leading-none mb-4">5</div>
+          <h3 class="font-display text-white text-2xl font-semibold mb-3">Transformative<br/>Program Areas</h3>
+          <p class="font-body text-white/65 text-sm leading-relaxed">
+            Dedicated to creating lasting social impact through affordable healthcare,
+            nutrition awareness, livelihood generation, and community empowerment.
+          </p>
+        </div>
+        <a href="#contact" class="mt-6 btn-gold inline-flex items-center justify-center font-body font-semibold text-forest py-3 px-6 rounded-xl text-sm">
+          Partner With Us →
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     MISSION QUOTE
+══════════════════════════════════ -->
+<section class="py-20 bg-forest relative overflow-hidden">
+  <div class="absolute inset-0 opacity-[0.035]" style="background:radial-gradient(circle,#c9a227 1.2px,transparent 1.2px);background-size:44px 44px;"></div>
+  <div class="relative z-10 max-w-3xl mx-auto px-5 lg:px-10 text-center reveal">
+    <svg class="mx-auto mb-5 opacity-25" width="44" height="34" viewBox="0 0 48 36" fill="#c9a227">
+      <path d="M0 36V21.6C0 14.4 2.4 8.8 7.2 4.8 12 .8 18.4 0 26.4 0v7.2c-4.8 0-8.4 1.2-10.8 3.6C13.2 13.2 12 16.8 12 21.6V36H0zm24 0V21.6c0-7.2 2.4-12.8 7.2-16.8C36 .8 42.4 0 50.4 0v7.2c-4.8 0-8.4 1.2-10.8 3.6C37.2 13.2 36 16.8 36 21.6V36H24z"/>
+    </svg>
+    <h2 class="font-display text-white text-2xl lg:text-4xl italic leading-relaxed">
+      Dedicated to improving lives through affordable healthcare, nutrition awareness,
+      livelihood generation, and community empowerment, creating lasting social impact
+      for those who need it most.
+    </h2>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     FOUNDERS
+══════════════════════════════════ -->
+<section id="founders" class="py-28 lg:py-36 bg-cream">
+  <div class="max-w-7xl mx-auto px-5 lg:px-10">
+
+    <div class="max-w-2xl mb-16 reveal">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="block w-10 h-[3px] bg-gold rounded"></span>
+        <span class="font-body text-gold text-xs tracking-[.22em] uppercase font-medium">Our Founders</span>
+      </div>
+      <h2 class="font-display text-forest text-4xl lg:text-5xl leading-[1.1]">
+        Guided by <em>Deep Expertise</em><br/>Across Three Disciplines
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8 stagger">
+
+      <!-- Dr Giriraj -->
+      <div class="founder-card bg-white rounded-3xl overflow-hidden shadow-lg border border-cream-warm reveal">
+        <div class="h-72 overflow-hidden">
+          <img src="images/founder-giriraj.png" alt="Dr Giriraj Ratan Chandak" class="founder-img w-full h-full object-cover object-top" />
+        </div>
+        <div class="p-7">
+          <p class="font-body text-gold text-xs tracking-[.18em] uppercase font-semibold mb-1">Founder</p>
+          <h3 class="font-display text-forest text-2xl font-semibold mb-1.5">Dr. Giriraj Ratan Chandak</h3>
+          <p class="font-body text-earth text-sm font-medium mb-4">Physician-Scientist · Human &amp; Medical Genetics</p>
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            <span class="font-body text-xs bg-forest/8 text-forest px-2.5 py-1 rounded-full border border-forest/15">CCMB</span>
+            <span class="font-body text-xs bg-forest/8 text-forest px-2.5 py-1 rounded-full border border-forest/15">CDFD Director</span>
+            <span class="font-body text-xs bg-forest/8 text-forest px-2.5 py-1 rounded-full border border-forest/15">30+ Years</span>
+          </div>
+          <p class="font-body text-earth/85 text-sm leading-relaxed">
+            A physician-scientist with over three decades in Human and Medical Genetics. He established
+            the first genetic diagnostic facility at CCMB in 1995 and served as Director of CDFD,
+            pioneering affordable genetic testing, prenatal diagnosis, and genetic counselling
+            services for thousands of patients.
+          </p>
+          <p class="font-body text-earth/75 text-sm leading-relaxed mt-3">
+            He has also worked extensively on maternal nutrition and prevention of non-communicable
+            diseases — diabetes, cardiovascular, and cognitive disorders.
+          </p>
+        </div>
+      </div>
+
+      <!-- Ashwini -->
+      <div class="founder-card bg-white rounded-3xl overflow-hidden shadow-lg border border-cream-warm reveal">
+        <div class="h-72 overflow-hidden">
+          <img src="images/founder-ashwini.jpg" alt="Ashwini Chandak" class="founder-img w-full h-full object-cover object-top" />
+        </div>
+        <div class="p-7">
+          <p class="font-body text-gold text-xs tracking-[.18em] uppercase font-semibold mb-1">Founder</p>
+          <h3 class="font-display text-forest text-2xl font-semibold mb-1.5">Ashwini Chandak</h3>
+          <p class="font-body text-earth text-sm font-medium mb-4">M.A. Economics · PG Rural Marketing &amp; Development</p>
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            <span class="font-body text-xs bg-forest/8 text-forest px-2.5 py-1 rounded-full border border-forest/15">World Bank</span>
+            <span class="font-body text-xs bg-forest/8 text-forest px-2.5 py-1 rounded-full border border-forest/15">FAO</span>
+            <span class="font-body text-xs bg-forest/8 text-forest px-2.5 py-1 rounded-full border border-forest/15">OXFAM</span>
+            <span class="font-body text-xs bg-forest/8 text-forest px-2.5 py-1 rounded-full border border-forest/15">25+ Yrs</span>
+          </div>
+          <p class="font-body text-earth/85 text-sm leading-relaxed">
+            With 25+ years in the development sector, Ashwini has researched and delivered
+            consultancy on sustainable agriculture, food systems, agri-businesses, community enterprises,
+            farmer producer organizations, and value chains.
+          </p>
+          <p class="font-body text-earth/75 text-sm leading-relaxed mt-3">
+            Collaborated with World Bank, DFID, IFAD, JICA, GIZ, FAO, OXFAM, Swissaid, Heifer,
+            The/Nudge, APRIGP, MACP, WORLP, SERP, and more.
+          </p>
+        </div>
+      </div>
+
+      <!-- Abhishek -->
+      <div class="founder-card bg-white rounded-3xl overflow-hidden shadow-lg border border-cream-warm reveal">
+        <div class="h-72 overflow-hidden">
+          <img src="images/founder-abhishek.png" alt="Abhishek Chandak" class="founder-img w-full h-full object-cover object-top" />
+        </div>
+        <div class="p-7">
+          <p class="font-body text-gold text-xs tracking-[.18em] uppercase font-semibold mb-1">Founder</p>
+          <h3 class="font-display text-forest text-2xl font-semibold mb-1.5">Abhishek Chandak</h3>
+          <p class="font-body text-earth text-sm font-medium mb-4">Chartered Accountant · Company Secretary</p>
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            <span class="font-body text-xs bg-forest/8 text-forest px-2.5 py-1 rounded-full border border-forest/15">PwC</span>
+            <span class="font-body text-xs bg-forest/8 text-forest px-2.5 py-1 rounded-full border border-forest/15">GE</span>
+            <span class="font-body text-xs bg-forest/8 text-forest px-2.5 py-1 rounded-full border border-forest/15">Wipro</span>
+            <span class="font-body text-xs bg-forest/8 text-forest px-2.5 py-1 rounded-full border border-forest/15">20+ Yrs</span>
+          </div>
+          <p class="font-body text-earth/85 text-sm leading-relaxed">
+            CA and Company Secretary with 20+ years at PwC, GE, Wipro, and SenecaGlobal —
+            in leadership roles across consulting, manufacturing, and IT. He guided CSR policy
+            and initiatives during his corporate tenure.
+          </p>
+          <p class="font-body text-earth/75 text-sm leading-relaxed mt-3">
+            He brings strong financial governance and strategy to the Foundation's operations,
+            ensuring accountability and long-term institutional strength.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     MEDIA COVERAGE — Newspaper Carousel
+     (auto-plays, navigation arrows, fade between slides)
+══════════════════════════════════ -->
+<section id="media" class="py-28 lg:py-36 bg-forest relative overflow-hidden">
+  <div class="absolute inset-0 opacity-[0.04]" style="background:radial-gradient(circle,#c9a227 1px,transparent 1px);background-size:44px 44px;"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-5 lg:px-10">
+
+    <div class="text-center mb-14 reveal">
+      <div class="flex items-center justify-center gap-3 mb-4">
+        <span class="block w-8 h-[2px] bg-gold rounded"></span>
+        <span class="font-body text-gold text-xs tracking-[.22em] uppercase font-medium">Media Coverage</span>
+        <span class="block w-8 h-[2px] bg-gold rounded"></span>
+      </div>
+      <h2 class="font-display text-white text-4xl lg:text-5xl mb-3">In the Press</h2>
+      <p class="font-body text-white/55 max-w-lg mx-auto text-sm leading-relaxed">
+        Newspaper coverage and media features highlighting Manasthya Foundation's
+        programs, outreach events, and community impact.
+      </p>
+    </div>
+
+    <!-- Newspaper carousel — full-width single-image with arrows + dots -->
+    <div class="relative max-w-4xl mx-auto reveal" id="news-carousel">
+
+      <!-- Carousel wrapper: natural image height, no black bars -->
+      <div class="carousel-wrap shadow-2xl border border-white/10">
+        <div class="news-slide active" id="slide-0">
+          <img src="images/newspaper/news-coverage-1.jpg" alt="Manasthya Foundation — Press Coverage 1" />
+        </div>
+        <div class="news-slide" id="slide-1">
+          <img src="images/newspaper/news-coverage-2.jpg" alt="Manasthya Foundation — Press Coverage 2" />
+        </div>
+        <div class="news-slide" id="slide-2">
+          <img src="images/newspaper/news-coverage-3.jpg" alt="Manasthya Foundation — Press Coverage 3" />
+        </div>
+        <div class="news-slide" id="slide-3">
+          <img src="images/newspaper/news-coverage-4.jpg" alt="Manasthya Foundation — Press Coverage 4" />
+        </div>
+        <div class="news-slide" id="slide-4">
+          <img src="images/newspaper/news-coverage-5.jpg" alt="Manasthya Foundation — Press Coverage 5" />
+        </div>
+        <div class="news-slide" id="slide-5">
+          <img src="images/newspaper/news-coverage-6.jpg" alt="Manasthya Foundation — Press Coverage 6" />
+        </div>
+        <div class="news-slide" id="slide-6">
+          <img src="images/newspaper/news-coverage-7.jpg" alt="Manasthya Foundation — Press Coverage 7" />
+        </div>
+        <div class="news-slide" id="slide-7">
+          <img src="images/newspaper/news-coverage-8.jpg" alt="Manasthya Foundation — Press Coverage 8" />
+        </div>
+        <div class="news-slide" id="slide-8">
+          <img src="images/newspaper/news-coverage-9.jpg" alt="Manasthya Foundation — Press Coverage 9" />
+        </div>
+
+        <!-- Prev -->
+        <button onclick="newsStep(-1)"
+          class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/55 hover:bg-gold hover:text-forest text-white flex items-center justify-center transition-all z-20 backdrop-blur-sm border border-white/20">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <!-- Next -->
+        <button onclick="newsStep(1)"
+          class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/55 hover:bg-gold hover:text-forest text-white flex items-center justify-center transition-all z-20 backdrop-blur-sm border border-white/20">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+
+        <!-- Counter -->
+        <div id="news-counter" class="absolute bottom-3 right-4 bg-black/60 backdrop-blur-sm text-white/80 text-xs font-body px-3 py-1 rounded-full z-20">
+          1 / 9
+        </div>
+      </div>
+
+      <!-- Dot indicators -->
+      <div class="flex justify-center gap-2 mt-5" id="news-dots">
+        <button onclick="newsGo(0)" class="news-dot w-2 h-2 rounded-full bg-gold transition-all" data-idx="0"></button>
+        <button onclick="newsGo(1)" class="news-dot w-2 h-2 rounded-full bg-white/30 transition-all" data-idx="1"></button>
+        <button onclick="newsGo(2)" class="news-dot w-2 h-2 rounded-full bg-white/30 transition-all" data-idx="2"></button>
+        <button onclick="newsGo(3)" class="news-dot w-2 h-2 rounded-full bg-white/30 transition-all" data-idx="3"></button>
+        <button onclick="newsGo(4)" class="news-dot w-2 h-2 rounded-full bg-white/30 transition-all" data-idx="4"></button>
+        <button onclick="newsGo(5)" class="news-dot w-2 h-2 rounded-full bg-white/30 transition-all" data-idx="5"></button>
+        <button onclick="newsGo(6)" class="news-dot w-2 h-2 rounded-full bg-white/30 transition-all" data-idx="6"></button>
+        <button onclick="newsGo(7)" class="news-dot w-2 h-2 rounded-full bg-white/30 transition-all" data-idx="7"></button>
+        <button onclick="newsGo(8)" class="news-dot w-2 h-2 rounded-full bg-white/30 transition-all" data-idx="8"></button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     CAMPS IMAGE SHOWCASE
+     (3 photos auto-rotate every 5s with fade)
+══════════════════════════════════ -->
+<section class="py-24 bg-cream overflow-hidden">
+  <div class="max-w-7xl mx-auto px-5 lg:px-10">
+
+    <div class="text-center mb-12 reveal">
+      <div class="flex items-center justify-center gap-3 mb-3">
+        <span class="block w-8 h-[2px] bg-gold rounded"></span>
+        <span class="font-body text-gold text-xs tracking-[.22em] uppercase font-medium">Our Work in Action</span>
+        <span class="block w-8 h-[2px] bg-gold rounded"></span>
+      </div>
+      <h2 class="font-display text-forest text-3xl lg:text-4xl">From the Field</h2>
+      <p class="font-body text-earth/65 text-sm mt-2 max-w-md mx-auto">
+        Snapshots from our outreach camps, community programs, and field activities.
+      </p>
+    </div>
+
+    <!-- Static camp image grid — uniform 3-column, square crop, no rotation -->
+    <div class="grid md:grid-cols-3 gap-6 reveal">
+      <div class="rounded-3xl overflow-hidden shadow-xl bg-forest-dark" style="aspect-ratio:1/1;">
+        <img src="images/camps/camp-activity-1.jpg"
+             alt="Foundation outreach camp — community health and welfare activity"
+             class="w-full h-full object-cover camps-grid-img" />
+      </div>
+      <div class="rounded-3xl overflow-hidden shadow-xl bg-forest-dark" style="aspect-ratio:1/1;">
+        <img src="images/camps/camp-activity-2.jpg"
+             alt="Foundation camp — rural development field program in action"
+             class="w-full h-full object-cover camps-grid-img" />
+      </div>
+      <div class="rounded-3xl overflow-hidden shadow-xl bg-forest-dark" style="aspect-ratio:1/1;">
+        <img src="images/camps/camp-activity-3.jpg"
+             alt="Foundation camp — community engagement and empowerment activity"
+             class="w-full h-full object-cover camps-grid-img" />
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     CONTACT
+══════════════════════════════════ -->
+<section id="contact" class="py-28 lg:py-36 bg-white relative overflow-hidden">
+  <div class="absolute top-0 right-0 w-80 h-80 rounded-full border border-forest/8 -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+  <div class="absolute bottom-0 left-0 w-56 h-56 rounded-full border border-gold/12 translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-5 lg:px-10">
+    <div class="grid lg:grid-cols-2 gap-14 items-start">
+
+      <div class="reveal-l">
+        <div class="flex items-center gap-3 mb-5">
+          <span class="block w-10 h-[3px] bg-gold rounded"></span>
+          <span class="font-body text-gold text-xs tracking-[.22em] uppercase font-medium">Get Involved</span>
+        </div>
+        <h2 class="font-display text-forest text-4xl lg:text-5xl leading-[1.1] mb-6">
+          Let's Build<br/><em>Better Lives Together</em>
+        </h2>
+        <p class="font-body text-earth/80 text-lg leading-relaxed mb-10">
+          Whether you're a donor, researcher, development organization, or community member —
+          reach out to explore how we can work together for lasting social impact.
+        </p>
+        <div class="space-y-5 mb-10">
+          <div class="flex items-start gap-4">
+            <div class="w-11 h-11 rounded-xl bg-forest/10 flex items-center justify-center flex-shrink-0">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1b4332" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <p class="font-body text-[10px] uppercase tracking-widest text-earth/50 mb-0.5">Email</p>
+              <a href="mailto:manasthyafoundation@gmail.com" class="font-body text-forest hover:text-gold transition-colors font-medium">manasthyafoundation@gmail.com</a>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-11 h-11 rounded-xl bg-forest/10 flex items-center justify-center flex-shrink-0">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1b4332" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <p class="font-body text-[10px] uppercase tracking-widest text-earth/50 mb-0.5">Address</p>
+              <p class="font-body text-forest text-sm leading-relaxed">Indu Aranya Pallavi Apartments, D-206,<br/>Near GSI (Sr) Bandlaguda, Hayathnagar,<br/>Hyderabad – 500068, Telangana</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-forest/6 rounded-2xl p-6">
+          <p class="font-body text-xs tracking-[.18em] uppercase text-forest/60 font-medium mb-3">We welcome collaborations in</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="font-body text-xs bg-white text-forest px-3 py-1.5 rounded-full border border-forest/12 shadow-sm">Healthcare</span>
+            <span class="font-body text-xs bg-white text-forest px-3 py-1.5 rounded-full border border-forest/12 shadow-sm">Rural Development</span>
+            <span class="font-body text-xs bg-white text-forest px-3 py-1.5 rounded-full border border-forest/12 shadow-sm">Nutrition</span>
+            <span class="font-body text-xs bg-white text-forest px-3 py-1.5 rounded-full border border-forest/12 shadow-sm">Education</span>
+            <span class="font-body text-xs bg-white text-forest px-3 py-1.5 rounded-full border border-forest/12 shadow-sm">Social Welfare</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal-r">
+        <div class="bg-white rounded-3xl p-6 lg:p-8 shadow-xl border border-cream-warm">
+          <h3 class="font-display text-forest text-2xl font-semibold mb-6">Send Us a Message</h3>
+          <!-- Typeform inline embed -->
+          <div data-tf-widget="nfi2YAmQ" data-tf-inline-on-mobile data-tf-medium="snippet" data-tf-auto-resize="520,720" style="width:100%;min-height:560px;border-radius:1rem;overflow:hidden;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+     FOOTER
+══════════════════════════════════ -->
+<footer class="bg-forest-dark text-white py-16" style="background:#0d2818;">
+  <div class="max-w-7xl mx-auto px-5 lg:px-10">
+
+    <div class="grid md:grid-cols-4 gap-10 pb-10 mb-10 border-b border-white/15">
+
+      <!-- Brand -->
+      <div class="md:col-span-2">
+        <div class="inline-flex items-center gap-3 bg-white/12 border border-white/20 rounded-2xl px-4 py-2.5 mb-5">
+          <img src="images/logo.png" alt="Manasthya Foundation" class="h-10 w-auto" />
+          <div>
+            <div class="font-display text-white text-lg font-semibold leading-tight">Manasthya</div>
+            <div class="font-body text-gold text-[10px] tracking-[.18em] uppercase font-medium">Foundation</div>
+          </div>
+        </div>
+        <p class="font-body text-white/60 text-sm leading-relaxed max-w-xs mb-5">
+          A Section 8 Company promoting charitable activities — healthcare, rural development,
+          nutrition, education, and social welfare for the underserved.
+        </p>
+        <a href="mailto:manasthyafoundation@gmail.com" class="font-body text-white/55 text-sm hover:text-gold transition-colors">
+          manasthyafoundation@gmail.com
+        </a>
+        <p class="font-body text-white/40 text-xs mt-2 leading-relaxed">
+          Indu Aranya Pallavi Apartments, D-206,<br/>
+          Near GSI (Sr) Bandlaguda, Hayathnagar,<br/>
+          Hyderabad – 500068, Telangana
+        </p>
+      </div>
+
+      <!-- Navigate -->
+      <div>
+        <p class="font-body text-sm font-semibold text-white mb-5 tracking-wide">Navigate</p>
+        <ul class="space-y-3 font-body text-sm text-white/65">
+          <li><a href="#about"    class="hover:text-gold transition-colors">About Us</a></li>
+          <li><a href="#programs" class="hover:text-gold transition-colors">Key Areas</a></li>
+          <li><a href="#founders" class="hover:text-gold transition-colors">Founders</a></li>
+          <li><a href="#media"    class="hover:text-gold transition-colors">Media</a></li>
+          <li><a href="#contact"  class="hover:text-gold transition-colors">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Our Work -->
+      <div>
+        <p class="font-body text-sm font-semibold text-white mb-5 tracking-wide">Our Work</p>
+        <ul class="space-y-3 font-body text-xs text-white/60 leading-relaxed">
+          <li>Healthcare &amp; Research</li>
+          <li>Environment &amp; Rural Development</li>
+          <li>Nutrition &amp; Healthy Food</li>
+          <li>Education &amp; Skill Development</li>
+          <li>Social Welfare &amp; Community</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="font-body text-xs text-white/35">© 2025 Manasthya Foundation. All rights reserved.</p>
+      <p class="font-body text-xs text-white/35">
+        Designed &amp; built by <a href="#" class="text-gold/65 hover:text-gold transition-colors">CodeAstra</a>
+      </p>
+    </div>
+
+  </div>
+</footer>
+
+
+<!-- ══════════════════════════════════
+     SCRIPTS
+══════════════════════════════════ -->
+<script>
+  // ── Navbar scroll + logo shrink ──────────────────
+  const nav     = document.getElementById('nav');
+  const navLogo = document.getElementById('nav-logo');
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY > 50;
+    nav.classList.toggle('solid', scrolled);
+  }, { passive: true });
+
+  // ── Mobile menu ──────────────────────────────────
+  let mobOpen = false;
+  document.getElementById('ham').addEventListener('click', () => {
+    mobOpen = !mobOpen;
+    document.getElementById('mob-menu').classList.toggle('open', mobOpen);
+    document.getElementById('ico-open').classList.toggle('hidden', mobOpen);
+    document.getElementById('ico-close').classList.toggle('hidden', !mobOpen);
+  });
+  function closeMob() {
+    mobOpen = false;
+    document.getElementById('mob-menu').classList.remove('open');
+    document.getElementById('ico-open').classList.remove('hidden');
+    document.getElementById('ico-close').classList.add('hidden');
+  }
+
+  // ── Scroll reveal ─────────────────────────────────
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -36px 0px' });
+  document.querySelectorAll('.reveal,.reveal-l,.reveal-r').forEach(el => io.observe(el));
+
+  // Hero reveals: script runs after DOM is ready (bottom of body), so call directly
+  setTimeout(() => {
+    document.querySelectorAll('.hero-wrap .reveal,.hero-wrap .reveal-l,.hero-wrap .reveal-r').forEach(el => el.classList.add('in'));
+  }, 80);
+
+  // ── Smooth anchor scroll ─────────────────────────
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) { e.preventDefault(); window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' }); }
+    });
+  });
+
+  // ══ NEWSPAPER CAROUSEL ═══════════════════════════
+  const NEWS_TOTAL = 9;
+  let newsIdx = 0;
+  let newsTimer = null;
+
+  function newsGo(idx) {
+    document.getElementById(`slide-${newsIdx}`).classList.remove('active');
+    const dots = document.querySelectorAll('.news-dot');
+    if (dots[newsIdx]) { dots[newsIdx].style.background = 'rgba(255,255,255,0.3)'; }
+    newsIdx = (idx + NEWS_TOTAL) % NEWS_TOTAL;
+    document.getElementById(`slide-${newsIdx}`).classList.add('active');
+    if (dots[newsIdx]) { dots[newsIdx].style.background = '#c9a227'; }
+    document.getElementById('news-counter').textContent = `${newsIdx + 1} / ${NEWS_TOTAL}`;
+  }
+  function newsStep(dir) {
+    clearInterval(newsTimer);
+    newsGo(newsIdx + dir);
+    newsTimer = setInterval(() => newsGo(newsIdx + 1), 5000);
+  }
+
+  newsTimer = setInterval(() => newsGo(newsIdx + 1), 5000);
+
+  const carousel = document.getElementById('news-carousel');
+  if (carousel) {
+    carousel.addEventListener('mouseenter', () => clearInterval(newsTimer));
+    carousel.addEventListener('mouseleave', () => { newsTimer = setInterval(() => newsGo(newsIdx + 1), 5000); });
+  }
+</script>
+
+<!-- Carousel & general fixes -->
+<style>
+  /* ── Newspaper carousel: active slide sets natural height, no black bars ── */
+  .carousel-wrap {
+    position: relative;
+    width: 100%;
+    background: #fff;
+    border-radius: 1.5rem;
+    overflow: hidden;
+  }
+  /* Invisible spacer — tallest image determines height via the active slide */
+  .news-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity .8s ease;
+    pointer-events: none;
+  }
+  .news-slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+    position: relative; /* only active slide contributes to height */
+  }
+  .news-slide img {
+    width: 100%;
+    height: auto;     /* natural dimensions — no black bars */
+    display: block;
+    max-height: 85vh; /* safety cap so very tall images don't overflow */
+    object-fit: contain;
+    background: #fff;
+    margin: 0 auto;
+  }
+  /* camp grid hover */
+  .camps-grid-img { transition: transform .4s ease; }
+  .camps-grid-img:hover { transform: scale(1.04); }
+</style>
+
+<!-- Typeform embed SDK -->
+<script src="//embed.typeform.com/next/embed.js"></script>
+
+</body>
+</html>
